@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-135" />
+    <option name="y" value="922" />
+    <option name="width" value="2289" />
+    <option name="height" value="1338" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1549645880447" />
+    <property name="settings.editor.selected.configurable" value="preferences.externalResources" />
+  </component>
+  <component name="RunManager">
+    <configuration name="autoqc" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="lu.neubias.imagej.autoqc" />
+      <module name="autoqc" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="lu.neubias.imagej.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.autoqc" />
+      </list>
+    </recent_temporary>
+  </component>
+</project>
