@@ -147,8 +147,8 @@ public class autoqc<T extends RealType<T>> extends Component implements Command 
         System.out.println("Opened file, processing");
         image.show();
 
+        // Crops the image to get middle of the field of view
         IJ.run("Specify...", "width=300 height=300 x=512 y=512 slice=1 centered");
-
         IJ.run("Crop");
 
         ImagePlus croppedImage = IJ.getImage();
@@ -159,6 +159,7 @@ public class autoqc<T extends RealType<T>> extends Component implements Command 
 
         float maxStd = -1;
 
+        // loops over stack Finds the in Focus slice
         for (int i=1; i < croppedImage.getNSlices(); i++){
 
             ImagePlus myslice = new Duplicator().run(croppedImage, i, i);
@@ -181,11 +182,13 @@ public class autoqc<T extends RealType<T>> extends Component implements Command 
         // detect beads and measure for intensity and x/y coords
         IJ.run("Find Maxima...", "noise=30 output=[Point Selection] exclude");
 
+        // Gets coordinates of ROIs
         Roi roi = infocusSlice.getRoi();
         FloatPolygon floatPolygon = roi.getFloatPolygon();
 
         float[][] resultsTable = new float[floatPolygon.npoints][3];
 
+        // loops over ROIs and get pixel Vvlue at their coordinate.
         for (int i=1; i < floatPolygon.npoints; i++){
 
             float intx = floatPolygon.xpoints[i];
@@ -201,6 +204,7 @@ public class autoqc<T extends RealType<T>> extends Component implements Command 
 
         System.out.println("ResultTable size " + resultsTable.length);
 
+        // Sorts the Pixel coordinates by the intensity value.
         java.util.Arrays.sort(resultsTable, new java.util.Comparator<float[]>() {
                     public int compare(float[] a, float[] b) {
 
@@ -216,6 +220,7 @@ public class autoqc<T extends RealType<T>> extends Component implements Command 
 
         System.out.println("Created table of size " + resultsTable.length);
 
+        // selects the selected number of pixels based on the specified criteria
         while (countSpots < beads && firstPosition < resultsTable.length ){
 
             float x1 = resultsTable[firstPosition][0];
@@ -262,17 +267,20 @@ public class autoqc<T extends RealType<T>> extends Component implements Command 
 
         double[][] finalResults  = new double[beads][3];
 
+        // loops over selected pixels and crops out the PSFs
         for (int i = 0; i < goodX.length; i++){
 
             ImagePlus PSFimage = new Duplicator().run(croppedImage, 1, croppedImage.getNSlices());
             PSFimage.show();
 
+            // crops stack around the specified coordinates
             IJ.run(PSFimage, "Specify...", "width=20 height=20 x=" + goodX[i] + " y=" + goodY[i] + " slice=1 centered");
             IJ.run("Crop");
             ImagePlus croppedPSF = IJ.getImage();
 
             croppedImage.show();
 
+            // calls GetRes to extract the resolution form the PSFs
             double[] qcMetrics = GetRes(croppedPSF);
 
             System.out.println("QC values " + qcMetrics[0]);
