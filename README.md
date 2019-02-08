@@ -46,7 +46,8 @@ Input file: a file of the specified file format (file extension) containing the 
 
 Example data used for testing this was named 100_psf_auxin_sf01_R3D.dv
 
-Dimension 1024x1024x21 16Bit
+Dimension: 1024x1024x21 16Bit
+
 
 Pixelsize: 0.04031x0.04031x0.15 micron (Metadata matters)
 
