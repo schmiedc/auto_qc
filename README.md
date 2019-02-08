@@ -26,7 +26,7 @@ bioformats (https://www.openmicroscopy.org/bio-formats/)
 Melissa Linkert, Curtis T. Rueden, Chris Allan, Jean-Marie Burel, Will Moore, Andrew Patterson, Brian Loranger, Josh Moore, Carlos Neves, Donald MacDonald, Aleksandra Tarkowska, Caitlin Sticco, Emma Hill, Mike Rossner, Kevin W. Eliceiri, and Jason R. Swedlow (2010) Metadata matters: access to image data in the real world. The Journal of Cell Biology 189(5), 777-782. doi: 10.1083/jcb.201004104
 
 MetroloJ (http://imagejdocu.tudor.lu/doku.php?id=plugin:analysis:metroloj:start)
-Cédric Matthews and Fabrice P. Cordelieres, MetroloJ : an ImageJ plugin to help monitor microscopes' health, in ImageJ User & Developer Conference 2010 proceedings
+Cédric Matthews and Fabrice P. Cordelieres, MetroloJ : an ImageJ plugin to help monitor microscopes' health, in ImageJ User & Developer Conference 2010 proceedings
 
 ==========================================================================================
 Acknowledgements
@@ -43,9 +43,13 @@ NEUBIAS and NEUBIAS TS11 organisers for creating the environment
 Title: Automatic PSF quality measurement
 
 Input file: a file of the specified file format (file extension) containing the string "psf"
+
 Example data used for testing this was named 100_psf_auxin_sf01_R3D.dv
+
 Dimension 1024x1024x21 16Bit
+
 Pixelsize: 0.04031x0.04031x0.15 micron (Metadata matters)
+
 Content: PSFs from flourescent beads
          The usual PSF measurement criteria apply:
          Well separated beads, not too dense, subresolution.
@@ -59,8 +63,11 @@ Input parameters - mostly hardcoded for now
     From this the base directory is extracted
 
 - File extension: self-explanatory
+
 - Number of beads: how many beads should be analysed
+
 - Correction factors: multiplying factor for the FWHM resolution output from MetroloJ, per dimension
+
 - minSeparation: minimal distance (probably in pixels?) that two PSFs need to be separated by to be considered
 
 Description:
@@ -83,7 +90,7 @@ Opens dialog for choosing a file.
 Gets based path of file.
 
 readFile:
-Opens file using Bioformats import
+Opens file using Bioformats import.
 Calls processing function.
 Specifies result file.
 Calls WriteFile to save result table.
@@ -109,10 +116,15 @@ Calls the PSF Profiler of MetroloJ on cropped PSF
 ToDo:
 
 User interaction with GUI
+
 Images are shown at the moment (batchmode?)
+
 Close opened images
+
 Documentation of the code
+
 Refactor
+
 Clean up code
 
 
