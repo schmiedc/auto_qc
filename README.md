@@ -13,7 +13,7 @@ Jean-Yves Tinevez
 For their help and guidance
 
 NEUBIAS and NEUBIAS TS organisers for creating the environment
-Fiji and ImageJ1/2
+Fiji and ImageJ1/2 for being an awesome software and community!
 
 ==========================================================================================
 
