@@ -22,49 +22,93 @@ import loci.plugins.BF;
 
 import metroloJ.resolution.PSFprofiler;
 import net.imagej.ImageJ;
-import net.imglib2.img.Img;
-import net.imglib2.img.array.ArrayImgs;
 
-import net.imglib2.type.numeric.RealType;
-import net.imglib2.type.numeric.real.FloatType;
+
+
+import org.scijava.ItemIO;
 import org.scijava.command.Command;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
+import org.scijava.widget.NumberWidget;
+import org.scijava.widget.Button;
 
-import javax.swing.*;
+
 import java.awt.*;
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 
 /**
+*For User Input check: https://github.com/imagej/tutorials/blob/master/maven-projects/widget-demo/src/main/java/WidgetDemo.java
+*
  */
 
-@Plugin(type = Command.class, menuPath = "Plugins>Gauss Filtering")
-public class autoqc<T extends RealType<T>> extends Component implements Command {
+
+@Plugin(type = Command.class, menuPath = "Plugins>Quality control>Autoqc")
+public class autoqc extends Component implements Command  {
+
+
+
+
+
+    @Parameter(label = "File extension (starting with a dot)")
+    private String ext = ".dv";
 
     @Parameter
-    private ImageJ ij;
+    private File file;
 
-    String ext = ".dv";
-    int beads = 3;
-    double corr_factor_x = 1.186;
+    @Parameter(label = "#Beads to analyze",
+            style = NumberWidget.SPINNER_STYLE, min = "1", max = "20")
+    private Integer beads=3;
+
+    @Parameter(label = "Correction Factor X")
+    private double corr_factor_x = 1.186;
+    @Parameter(label = "Correction Factor Y")
+    private double corr_factor_y = 1.186;
+    @Parameter(label = "Correction Factor Z")
+    private double corr_factor_z = 1.186;
+
+    @Parameter(label = "Minimal separation",
+            style = NumberWidget.SPINNER_STYLE, min = "1", max = "30")
+    private int minSeparation = 15;
+
+
+
+    //String ext = ".dv";
+    //int beads = 1;
+   /* double corr_factor_x = 1.186;
     double corr_factor_y = 1.186;
-    double corr_factor_z = 1.186;
-    int minSeparation = 15;
+    double corr_factor_z = 1.186;*/
+    //int minSeparation = 15;
 
+
+    // You can control how previews work by overriding the "preview" method.
+    // The code written in this method will be automatically executed every
+    // time a widget value changes. In this case, we log a message with the
+    // count of previews so far, and show the current value of the "message"
+    // parameter in the ImageJ status bar.
+
+
+
+    private void append(final StringBuilder sb, final String s) {
+        sb.append(s + "\n");
+    }
     public void run() {
 
-        JFileChooser chooser = new JFileChooser();
-        int returnVal= (int) chooser.showOpenDialog(this);
 
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        File selectedDir = chooser.getCurrentDirectory();
-        File selectedFile = chooser.getSelectedFile();
 
+       // JFileChooser chooser = new JFileChooser();
+        //int returnVal= (int) chooser.showOpenDialog(this);
+
+        //chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+       /* File selectedDir = chooser.getCurrentDirectory();
+        File selectedFile = chooser.getSelectedFile();*/
+
+        File selectedDir = file.getParentFile();
+        String selectedFile = file.getName();
 
         String srcDir = selectedDir.getAbsolutePath();
 
@@ -107,7 +151,7 @@ public class autoqc<T extends RealType<T>> extends Component implements Command 
                 512, 512
         };
 
-        Img<FloatType> imgFinal = ArrayImgs.floats(dimensions);
+       // Img<FloatType> imgFinal = ArrayImgs.floats(dimensions);
 
         ImagePlus[] imps = new ImagePlus[0];
 
@@ -115,6 +159,7 @@ public class autoqc<T extends RealType<T>> extends Component implements Command 
         try {
 
             imps = BF.openImagePlus(arg);
+
             imp = imps[0];
             //imgFinal = ImageJFunctions.convertFloat(imps[0]);
             // ij.ui().show(imgFinal);
@@ -177,7 +222,10 @@ public class autoqc<T extends RealType<T>> extends Component implements Command 
         }
 
         ImagePlus infocusSlice = new Duplicator().run(croppedImage, slicePos, slicePos);
-        infocusSlice.show();
+
+
+       infocusSlice.show();
+
 
         // detect beads and measure for intensity and x/y coords
         IJ.run("Find Maxima...", "noise=30 output=[Point Selection] exclude");
@@ -201,7 +249,7 @@ public class autoqc<T extends RealType<T>> extends Component implements Command 
             resultsTable[i-1][2] = (float) pixel[0];
 
         }
-
+        infocusSlice.hide();
         System.out.println("ResultTable size " + resultsTable.length);
 
         // Sorts the Pixel coordinates by the intensity value.
@@ -277,12 +325,12 @@ public class autoqc<T extends RealType<T>> extends Component implements Command 
             IJ.run(PSFimage, "Specify...", "width=20 height=20 x=" + goodX[i] + " y=" + goodY[i] + " slice=1 centered");
             IJ.run("Crop");
             ImagePlus croppedPSF = IJ.getImage();
-
-            croppedImage.show();
+            PSFimage.hide();
+           croppedImage.show();
 
             // calls GetRes to extract the resolution form the PSFs
             double[] qcMetrics = GetRes(croppedPSF);
-
+            croppedImage.hide();
             System.out.println("QC values " + qcMetrics[0]);
             System.out.println("QC values " + qcMetrics[1]);
             System.out.println("QC values " + qcMetrics[2]);
@@ -384,8 +432,18 @@ public class autoqc<T extends RealType<T>> extends Component implements Command 
 
             // invoke the plugin
            // ij.command().run(autoqc.class, true);
-        autoqc test = new autoqc();
-        test.run();
+
+
+
+
+
+        final ImageJ ij = new ImageJ();
+        ij.launch(args);
+        //ij.ui().showUI();
+
+        ij.command().run(autoqc.class, true);
+       /* autoqc test = new autoqc();
+        test.run();*/
         }
     }
 
